@@ -3,5 +3,8 @@
 
 echo \"'------->' git hook status pre-commit \"
 
+echo \"'------->' start \(format\) \"
+bun run format
 
-
+echo \"'------->' start \(lint\) \"
+bun run lint
