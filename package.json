@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky install",
-    "format": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore ."
+    "format": "prettier --check --ignore-path .prettierignore .",
+    "format:fix": "prettier --write --ignore-path .prettierignore .",
+    "update-i18n": "echo update-i18n... && bun ./src/app/i18n/update-i18n.ts"
   },
   "dependencies": {
     "accept-language": "^3.0.18",

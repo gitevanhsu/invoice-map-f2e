@@ -34,4 +34,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-
+# i18n
+/src/app/i18n/languages
