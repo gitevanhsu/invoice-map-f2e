@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo \"'------->' git hook status pre-commit \"
+
+echo \"'------->' start \(format\) \"
+bun run format
+
+echo \"'------->' start \(lint\) \"
+bun run lint
+
+echo \"'------->' start \(jest\) \"
+bun run jest
+
+echo \"'------->' start \(cypress\) \"
+bun run cypress:test

@@ -1,0 +1,46 @@
+#!/usr/bin/env sh
+# . "$(dirname -- "$0")/_/husky.sh"
+
+echo \"'------->' git hook status commit-msg \"
+
+# 取得輸入的 commit message
+message="$(cat $1)"
+# 定義 commit 的正則
+requiredPattern="^(feat:|fix:|docs:|style:|refactor:|pref:|test:|build:|ci:|chore:|revert:|Merge) .*$"
+
+
+echo \"Recived message '------->' $message \" 
+
+# 檢查 message 變數的內容是否符合 requiredPattern 定義的格式要求。
+# 如不符合則...
+if ! [[ $message =~ $requiredPattern ]];
+then
+  echo "-"
+  echo "-"
+  echo "-"
+  echo "🚨🚨🚨 Wrong commit message! 😕😕😕"
+  echo "The commit message must have this format:"
+  echo "<verb in imperative mood>: <what was done>"
+  echo "Allowed verbs in imperative mood:"
+  echo "---- feat: A new feature."
+  echo "---- fix: A bug fix."
+  echo "---- docs: Documentation only changes."
+  echo "---- style: Changes that do not affect the meaning of the code \(white-space, formatting, missing semi-colons, etc\)."
+  echo "---- refactor: A code change that neither fixes a bug nor adds a feature."
+  echo "---- pref: A code change that improves performance."
+  echo "---- test: Adding missing tests or correcting existing tests."
+  echo "---- build: Changes that affect the build system or external dependencies \(example scopes: gulp, broccoli, npm\)."
+  echo "---- ci: Changes to our CI configuration files and scripts \(example scopes: Travis, Circle, BrowserStack, SauceLabs\)."
+  echo "---- chore: Other changes that don't modify src or test files."
+  echo "---- revert: Reverts a previous commit."
+  echo "---- Merge: Merge a branch."
+
+  echo "Example: feat: add login button"
+  echo "-"
+  echo "Your commit message was:"
+  echo $message
+  echo "-"
+  echo "For more information, check script in .husky/commit-msg"
+  echo "-"
+  exit 1
+fi
