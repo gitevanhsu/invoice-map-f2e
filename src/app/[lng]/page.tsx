@@ -1,11 +1,9 @@
 import { useTranslation } from "@/app/i18n";
 import Link from "next/link";
 
-export default async function Page({
-  params: { lng },
-}: {
-  params: { lng: string };
-}) {
+import { PageProps } from "@/app/types";
+
+export default async function Page({ params: { lng } }: PageProps) {
   const { t } = await useTranslation(lng);
 
   return (

@@ -1,3 +1,4 @@
 const nextJest = require("next/jest");
 const createJestConfig = nextJest({ dir: "./" });
-module.exports = createJestConfig();
+const customJestConfig = { testEnvironment: "jest-environment-jsdom" };
+module.exports = createJestConfig(customJestConfig);

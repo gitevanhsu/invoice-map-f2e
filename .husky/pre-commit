@@ -8,3 +8,6 @@ bun run format
 
 echo \"'------->' start \(lint\) \"
 bun run lint
+
+echo \"'------->' start \(jest\) \"
+bun run jest
