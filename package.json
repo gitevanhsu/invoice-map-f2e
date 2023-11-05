@@ -12,9 +12,15 @@
     "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
+    "accept-language": "^3.0.18",
+    "i18next": "^23.6.0",
+    "i18next-browser-languagedetector": "^7.1.0",
+    "i18next-resources-to-backend": "^1.1.4",
+    "next": "14.0.1",
     "react": "^18",
+    "react-cookie": "^6.1.1",
     "react-dom": "^18",
-    "next": "14.0.1"
+    "react-i18next": "^13.3.1"
   },
   "devDependencies": {
     "@types/node": "^20",
