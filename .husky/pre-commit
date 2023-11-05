@@ -11,3 +11,6 @@ bun run lint
 
 echo \"'------->' start \(jest\) \"
 bun run jest
+
+echo \"'------->' start \(cypress\) \"
+bun run cypress:test
