@@ -16,20 +16,54 @@ describe("first visit", () => {
   });
 });
 
+// test PC device
 describe("languages change event", () => {
   it("change language", () => {
     // visit page
     cy.visit("http://localhost:3000/tw");
+
     // find a tag to change language
-    cy.get("a").contains("en").click();
+    cy.get("header > div > div").trigger("mouseover");
+    cy.get("a").contains("English").click();
     cy.url().should("match", /en/);
     cy.get("h1").should("contain.text", "Hi there!");
 
-    cy.get("a").contains("jp").click();
+    cy.get("header > div > div").trigger("mouseover");
+    cy.get("a").contains("日本語").click();
     cy.url().should("match", /jp/);
     cy.get("h1").should("contain.text", "こんにちは!");
 
-    cy.get("a").contains("tw").click();
+    cy.get("header > div > div").trigger("mouseover");
+    cy.get("a").contains("繁體中文").click();
+    cy.url().should("match", /tw/);
+    cy.get("h1").should("contain.text", "你好!");
+  });
+});
+
+// test mobile device
+describe("languages change event", () => {
+  it("change language", () => {
+    // visit page
+    cy.viewport("iphone-6");
+    cy.visit("http://localhost:3000/tw");
+
+    // find a tag to change language
+    cy.get("header:last-of-type > div").click();
+    cy.get("div").contains("Languages").click();
+
+    cy.get("a").contains("English").click({ force: true });
+    cy.url().should("match", /en/);
+    cy.get("h1").should("contain.text", "Hi there!");
+
+    cy.get("header:last-of-type > div").click();
+    cy.get("div").contains("Languages").click();
+    cy.get("a").contains("日本語").click({ force: true });
+    cy.url().should("match", /jp/);
+    cy.get("h1").should("contain.text", "こんにちは!");
+
+    cy.get("header:last-of-type > div").click();
+    cy.get("div").contains("Languages").click();
+    cy.get("a").contains("繁體中文").click({ force: true });
     cy.url().should("match", /tw/);
     cy.get("h1").should("contain.text", "你好!");
   });
