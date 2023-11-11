@@ -12,6 +12,7 @@
     "format:fix": "prettier --write --ignore-path .prettierignore .",
     "update-i18n": "echo update-i18n... && bun ./src/app/i18n/update-i18n.ts",
     "test": "jest --clearCache && jest",
+    "test:watch": "jest --clearCache && jest --watch",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:test": "start-server-and-test dev http://localhost:3000 cypress:run",
@@ -19,6 +20,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@mdi/js": "^7.3.67",
+    "@mdi/react": "^1.6.1",
     "accept-language": "^3.0.18",
     "i18next": "^23.6.0",
     "i18next-browser-languagedetector": "^7.1.0",
@@ -30,13 +33,14 @@
     "react-i18next": "^13.3.1"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^7.5.2",
-    "@storybook/addon-interactions": "^7.5.2",
-    "@storybook/addon-links": "^7.5.2",
+    "@storybook/addon-essentials": "^7.5.3",
+    "@storybook/addon-interactions": "^7.5.3",
+    "@storybook/addon-links": "^7.5.3",
+    "@storybook/addon-mdx-gfm": "^7.5.3",
     "@storybook/addon-onboarding": "^1.0.8",
-    "@storybook/blocks": "^7.5.2",
-    "@storybook/nextjs": "^7.5.2",
-    "@storybook/react": "^7.5.2",
+    "@storybook/blocks": "^7.5.3",
+    "@storybook/nextjs": "^7.5.3",
+    "@storybook/react": "^7.5.3",
     "@storybook/testing-library": "^0.2.2",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
@@ -58,7 +62,7 @@
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "start-server-and-test": "^2.0.1",
-    "storybook": "^7.5.2",
+    "storybook": "^7.5.3",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }

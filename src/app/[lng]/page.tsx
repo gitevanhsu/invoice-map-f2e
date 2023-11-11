@@ -1,7 +1,7 @@
 import { useTranslation } from "@/app/i18n";
 import Link from "next/link";
 
-import { PageProps } from "@/app/types";
+import { PageProps } from "./types";
 
 export default async function Page({ params: { lng } }: PageProps) {
   const { t } = await useTranslation(lng);
@@ -9,7 +9,9 @@ export default async function Page({ params: { lng } }: PageProps) {
   return (
     <>
       <h1>{t("title")}</h1>
-      <Link href={`/${lng}/second-page`}>{t("to-second-page")}</Link>
+      <Link className="border-2" href={`/${lng}/second-page`}>
+        {t("to-second-page")}
+      </Link>
     </>
   );
 }

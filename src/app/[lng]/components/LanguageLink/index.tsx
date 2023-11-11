@@ -9,8 +9,17 @@ function handleLanguageChange(pathname: string, targetLanguage?: string) {
   return `/${targetLanguage || lng}/${subPath}`;
 }
 
-export default function LanguageLink({ l }: { l: string }) {
+type Props = { l: string; className?: string; children: JSX.Element };
+
+export default function LanguageLink({ l, children, className }: Props) {
   const pathname = usePathname();
 
-  return <Link href={handleLanguageChange(pathname, l)}>{l}</Link>;
+  return (
+    <Link
+      className={className && className}
+      href={handleLanguageChange(pathname, l)}
+    >
+      {children && children}
+    </Link>
+  );
 }
