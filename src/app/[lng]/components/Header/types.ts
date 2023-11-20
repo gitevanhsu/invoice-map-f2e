@@ -5,4 +5,5 @@ type LanguageListType = {
 };
 export type HeaderProps = {
   languageList: Array<LanguageListType>;
+  lng: string;
 };

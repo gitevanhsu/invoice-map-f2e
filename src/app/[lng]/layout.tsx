@@ -52,10 +52,10 @@ export default function RootLayout({ children, params: { lng } }: LayoutProps) {
       <head />
       <body
         suppressHydrationWarning={true}
-        className="flex min-h-screen flex-col"
+        className="flex min-h-screen flex-col bg-primary-bgMain"
       >
-        <DeskHeader languageList={languageList} />
-        <MobileHeader languageList={languageList} />
+        <DeskHeader languageList={languageList} lng={lng} />
+        <MobileHeader languageList={languageList} lng={lng} />
         <main className="px-2 py-2">{children}</main>
         <Footer />
       </body>
