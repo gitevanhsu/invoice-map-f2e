@@ -8,13 +8,13 @@ export default function HoverList({ title, content }: HoverListProps) {
 
   return (
     <div
-      className="relative cursor-pointer"
+      className="relative cursor-pointer bg-primary-blue"
       onMouseOver={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       {title}
       <ul
-        className={`absolute right-[0px] top-[100%] overflow-hidden rounded-md bg-primary
+        className={`absolute right-[0px] top-[100%] overflow-hidden rounded-md bg-primary-blue text-white 
         ${hover ? "block" : "hidden"}`}
       >
         {content.length > 0 &&

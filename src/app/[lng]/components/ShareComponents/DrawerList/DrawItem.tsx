@@ -16,7 +16,7 @@ export default function DrawerItem({
   return (
     <>
       <li
-        className={`flex min-h-[45px] w-full list-none items-center px-4 py-2 hover:brightness-150 hover:backdrop-brightness-150
+        className={`flex min-h-[45px] w-full list-none items-center px-4 py-2 text-white hover:brightness-150 hover:backdrop-brightness-150
         ${subList && "cursor-pointer"}
         ${active && "brightness-150 backdrop-brightness-150"}`}
         onClick={() => subList && setOpen((prev) => !prev)}
