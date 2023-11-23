@@ -45,10 +45,10 @@ export default function MobileHeader({ languageList, lng }: HeaderProps) {
       {open && (
         <>
           <div
-            className="fixed left-0 top-0 h-full w-screen bg-black/30"
+            className="fixed left-0 top-0 z-20 h-full w-screen bg-black/30"
             onClick={() => setOpen(false)}
           ></div>
-          <div className="fixed right-0 top-0 h-full min-w-[200px] overflow-auto bg-primary-blue ">
+          <div className="fixed right-0 top-0 z-30 h-full min-w-[200px] overflow-auto bg-primary-blue">
             <DrawerList onClose={() => setOpen(false)} content={drawerList} />
           </div>
         </>

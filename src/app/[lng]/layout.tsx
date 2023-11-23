@@ -56,7 +56,7 @@ export default function RootLayout({ children, params: { lng } }: LayoutProps) {
       >
         <DeskHeader languageList={languageList} lng={lng} />
         <MobileHeader languageList={languageList} lng={lng} />
-        <main className="px-2 py-2">{children}</main>
+        <main className="">{children}</main>
         <Footer />
       </body>
     </html>
