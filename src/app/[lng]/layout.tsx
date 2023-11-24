@@ -52,11 +52,11 @@ export default function RootLayout({ children, params: { lng } }: LayoutProps) {
       <head />
       <body
         suppressHydrationWarning={true}
-        className="flex min-h-screen flex-col bg-primary-bgMain"
+        className="relative flex min-h-screen flex-col bg-primary-bgMain"
       >
         <DeskHeader languageList={languageList} lng={lng} />
         <MobileHeader languageList={languageList} lng={lng} />
-        <main className="">{children}</main>
+        <main className="h-full">{children}</main>
         <Footer />
       </body>
     </html>
