@@ -17,6 +17,7 @@ import countyGeoData from "@/public/countyGeoData.json";
 import townGeoData from "@/public/townGeoData.json";
 import { InvoiceType } from "@/app/types";
 import { findHighestCandidate } from "@/app/utils/number";
+import { removeSpace } from "@/app/utils/string";
 
 type CountyGeoItemType = {
   type: string;
@@ -40,7 +41,9 @@ const pathGenerator: any = geoPath().projection(projection);
 
 // Taiwan GeoMap
 export default function GeoMap({ data }: { data: InvoiceType }) {
+  const [colTab, setColTab] = useQueryState("chart");
   const [county, setCounty] = useQueryState("county");
+  const [town, setTown] = useQueryState("town");
 
   const [hover, setHover] = useState<string>("");
   const [zoom, setZoom] = useState<string>("");
@@ -50,7 +53,8 @@ export default function GeoMap({ data }: { data: InvoiceType }) {
 
   const handleZoomIn = useCallback(
     function handleZoomIn(geoItem: CountyGeoItemType) {
-      setCounty(geoItem.properties.county);
+      setCounty(geoItem.properties.county_en);
+      setTown(null);
       setZoom(geoItem.properties.county_en);
       const bounds = pathGenerator.bounds(geoItem);
       const dx = bounds[1][0] - bounds[0][0];
@@ -66,28 +70,35 @@ export default function GeoMap({ data }: { data: InvoiceType }) {
         .duration(750)
         .attr("transform", `translate(${translate}) scale(${scale})`);
     },
-    [setCounty]
+    [setCounty, setTown]
   );
 
-  function handleZoomOut() {
-    setCounty(null);
-    setZoom("");
-    setHover("");
-    select(gRef.current)
-      .transition()
-      .delay(100)
-      .duration(750)
-      .attr("transform", "translate(0,0)");
-  }
+  const handleZoomOut = useCallback(
+    function handleZoomOut() {
+      setCounty(null);
+      setTown(null);
+      setZoom("");
+      setHover("");
+      select(gRef.current)
+        .transition()
+        .delay(100)
+        .duration(750)
+        .attr("transform", "translate(0,0)");
+    },
+    [setCounty, setTown]
+  );
 
   useEffect(() => {
     if (county) {
       const target = countyGeoData.features.find(
-        ({ properties: { county: county_cn } }) => county_cn === county
+        ({ properties: { county_en } }) => county_en === county
       );
       if (target) handleZoomIn(target);
+    } else {
+      handleZoomOut();
+      setTown(null);
     }
-  }, [county, handleZoomIn]);
+  }, [county, handleZoomIn, handleZoomOut, setTown]);
 
   return (
     <div className="max-w[650] relative min-w-[350px] md:w-1/2">
@@ -103,7 +114,7 @@ export default function GeoMap({ data }: { data: InvoiceType }) {
               if (!data) return null;
               const { county_id, county_en } = item.properties;
               const { candidate1, candidate2, candidate3 } =
-                data[county_en.replaceAll(" ", "")];
+                data[removeSpace(county_en)];
 
               const candidate = findHighestCandidate(
                 candidate1,
@@ -143,9 +154,7 @@ export default function GeoMap({ data }: { data: InvoiceType }) {
                 if (county_en !== zoom) return null;
 
                 const { candidate1, candidate2, candidate3 } =
-                  data[county_en.replaceAll(" ", "")].detail![
-                    town_en.replaceAll(" ", "")
-                  ];
+                  data[removeSpace(county_en)].detail![removeSpace(town_en)];
                 const candidate = findHighestCandidate(
                   candidate1,
                   candidate2,
@@ -171,7 +180,7 @@ export default function GeoMap({ data }: { data: InvoiceType }) {
           </g>
         </g>
       </svg>
-      {zoom && (
+      {colTab === "1" && zoom && (
         <div
           className="absolute right-5 top-5 flex items-center rounded-lg border bg-white p-2 pl-1"
           onClick={handleZoomOut}

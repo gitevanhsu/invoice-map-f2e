@@ -18,6 +18,13 @@ export const bgColorMapLight: { [key: string]: string } = {
   中國國民黨: "bg-blue-light",
   民主進步黨: "bg-green-light",
 };
+
+export const fromColorMapLight: { [key: string]: string } = {
+  親民黨: "from-orange-light",
+  中國國民黨: "from-blue-light",
+  民主進步黨: "from-green-light",
+};
+
 export const bgColorMapDark: { [key: string]: string } = {
   親民黨: "bg-orange-dark",
   中國國民黨: "bg-blue-dark",

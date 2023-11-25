@@ -5,7 +5,7 @@ export type CandidateType = {
   party: string;
   votes: number;
 };
-type InvoiceDataType = {
+export type InvoiceDataType = {
   fieldCN: string;
   fieldEn: string;
   id: string;

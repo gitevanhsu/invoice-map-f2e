@@ -5,9 +5,9 @@ import Link from "next/link";
 
 import triRightImg from "@/public/images/icon_arrow_right.png";
 import triLeftImg from "@/public/images/icon_arrow_left.png";
-import { InvoiceType } from "@/app/types";
+import { InvoiceDataType, InvoiceType } from "@/app/types";
 import { bgColorMapLight } from "@/app/setting/color";
-import { countyArray } from "@/app/setting/location";
+import { countyArray, countyTownArray } from "@/app/setting/location";
 import {
   findHighestCandidate,
   numberFormatter,
@@ -15,9 +15,22 @@ import {
 } from "@/app/utils/number";
 import CandidateBasicInfo from "../CandidateBasicInfo";
 import ElectionDetail from "../ElectionDetail";
-import { Card, TabButtonRow, TabButtonCol } from "../ShareComponents";
+import {
+  Card,
+  TabButtonRow,
+  TabButtonCol,
+  PartyBars,
+  SimpleChart,
+  NumberBars,
+  Item,
+  CardSmall,
+} from "../ShareComponents";
 import { useQueryState } from "next-usequerystate";
 import { useTranslation } from "@/app/i18n/client";
+import { partyIconMap } from "@/app/setting/partIcon";
+import { removeSpace } from "@/app/utils/string";
+import { mdiChevronLeft } from "@mdi/js";
+import Icon from "@mdi/react";
 
 type getElectionDetailProps = {
   [key: string]: {
@@ -36,24 +49,92 @@ function getElectionDetail(data: getElectionDetailProps, key: string) {
     invalid: numberFormatter(data[key].invalidVotes),
   };
 }
-const electionSession: {
-  [key: string]: {
-    session: string;
-  };
-} = { "2020": { session: "第15屆" }, "2016": { session: "第14屆" } };
+const electionSession: { [key: string]: { session: string } } = {
+  "2020": { session: "第15屆" },
+  "2016": { session: "第14屆" },
+};
+
+function parsePartyBarsData(
+  data: { [key: string]: InvoiceType },
+  county: string | null,
+  town: string | null
+) {
+  const key = (county && removeSpace(county)) ?? "all";
+
+  return Object.keys(data).map((item) => {
+    const townData =
+      town &&
+      data[item][key].detail &&
+      data[item][key].detail![removeSpace(town)];
+
+    const { candidate1, candidate2, candidate3 } =
+      (townData as InvoiceDataType) ?? data[item][key];
+
+    const { party } = findHighestCandidate(candidate1, candidate2, candidate3);
+    return {
+      year: item,
+      party,
+      icon: partyIconMap[party],
+    };
+  });
+}
+
+function parseSimpleChartData(
+  data: { [key: string]: InvoiceType },
+  county: string | null,
+  town: string | null
+) {
+  const key = (county && removeSpace(county)) ?? "all";
+
+  return Object.keys(data).map((item) => {
+    const townData =
+      town &&
+      data[item][key].detail &&
+      data[item][key].detail![removeSpace(town)];
+
+    const { voteRate } = (townData as InvoiceDataType) ?? data[item][key];
+    return {
+      year: item,
+      rate: voteRate,
+    };
+  });
+}
+
+function parseNumberBarsData(
+  data: { [key: string]: InvoiceType },
+  county: string | null,
+  town: string | null
+) {
+  const key = (county && removeSpace(county)) ?? "all";
+  return Object.keys(data).map((item) => {
+    const townData =
+      town &&
+      data[item][key].detail &&
+      data[item][key].detail![removeSpace(town)];
+
+    const { validVotes } = (townData as InvoiceDataType) ?? data[item][key];
+    return {
+      year: item,
+      number: validVotes,
+    };
+  });
+}
 
 export default function MobileSheet({
   lng,
   year,
   data,
+  allData,
 }: {
   lng: string;
   year: string;
   data: InvoiceType;
+  allData: { [key: string]: InvoiceType };
 }) {
   const [rowTab, setRowTab] = useState("1");
-  const [colTab, setColTab] = useState("1");
+  const [colTab, setColTab] = useQueryState("chart");
   const [county, setCounty] = useQueryState("county");
+  const [town, setTown] = useQueryState("town");
   const { t } = useTranslation(lng, "mobile-sheet");
 
   const rowTabArray = [
@@ -65,37 +146,208 @@ export default function MobileSheet({
     { value: t("歷屆"), id: "2" },
   ];
 
-  const queryCounty = countyArray.find(({ value }) => value === county);
-  const dataKey = queryCounty ? queryCounty.key.replaceAll(" ", "") : "all";
+  const queryCounty = countyArray.find(({ key }) => key === county);
+  const countyKey = queryCounty ? removeSpace(queryCounty.key) : "all";
 
-  const { candidate1, candidate2, candidate3 } = data[dataKey];
+  const townKey = town ? removeSpace(town) : "";
+  const dataRecourse = townKey
+    ? data[countyKey].detail![townKey]
+    : data[countyKey];
+
+  const { candidate1, candidate2, candidate3 } = dataRecourse;
   const candidate = findHighestCandidate(candidate1, candidate2, candidate3);
 
   const candidateArray = [candidate1, candidate2, candidate3].map((item) => ({
     ...item,
     votes: numberFormatter(item.votes),
-    share: formatToPercentage(item.votes / data[dataKey].validVotes).replace(
+    share: formatToPercentage(item.votes / data[countyKey].validVotes).replace(
       "%",
       ""
     ),
     win: candidate.id === item.id,
   }));
 
-  const electionDetail = getElectionDetail(data, dataKey);
+  const result = data[countyKey];
 
-  return (
+  const townArray =
+    result.detail &&
+    Object.keys(result.detail).reduce<Array<{ value: string; key: string }>>(
+      (acc, town) => {
+        if (town !== "all") {
+          acc.push({
+            value: result.detail![town].fieldCN,
+            key: result.detail![town].fieldEn,
+          });
+        }
+        return acc;
+      },
+      []
+    );
+
+  const currentCounty =
+    countyArray.find(({ key }) => key === county)?.value ?? "全國";
+
+  const currentTown =
+    townArray && townArray.find(({ key }) => key === town)?.value;
+
+  const electionDetail = getElectionDetail(data, countyKey);
+
+  return colTab === "2" ? (
+    <div className="pointer-events-none absolute top-0 mt-[50px] w-full md:mt-[80px]">
+      <p className="flex items-center bg-[#e2e8f0] p-4 text-lg font-bold leading-none text-primary-bgMain">
+        {currentTown ? (
+          <>
+            <CardSmall className="px-2 py-1">
+              <>{currentCounty}</>
+            </CardSmall>
+            <p className="mx-[2px] text-lg leading-none text-primary-bgMain">
+              /
+            </p>
+            {currentTown}
+          </>
+        ) : (
+          currentCounty
+        )}
+        {county && " "}歷屆變化
+      </p>
+
+      {county && (
+        <div className="pointer-events-none relative h-[400px]">
+          <div
+            className="absolute right-5 top-5 flex items-center rounded-lg border bg-white p-2 pl-1"
+            onClick={() => {
+              setCounty(null);
+              setTown(null);
+            }}
+          >
+            <Icon path={mdiChevronLeft} size={1} color={"#475569"} />
+            <p className="pointer-events-auto text-base font-medium leading-none text-primary-bgMain">
+              返回全國
+            </p>
+          </div>
+        </div>
+      )}
+      <div
+        className={`flex flex-col space-y-3 bg-[#e2e8f0] p-4 ${
+          !county && "pt-0"
+        }`}
+      >
+        <Card
+          titleDivide
+          className="rounded-b-lg"
+          title={<p className="-mb-1 text-base">政黨輪替</p>}
+        >
+          <div className="px-4">
+            <PartyBars
+              data={parsePartyBarsData(allData, county, town)}
+              label={"政黨"}
+            />
+          </div>
+        </Card>
+        <Card
+          titleDivide
+          className="rounded-b-lg"
+          title={<p className="-mb-1 text-base">歷屆投票率</p>}
+        >
+          <div className="pr-4 pt-2">
+            <SimpleChart
+              data={parseSimpleChartData(allData, county, town)}
+              labelY="%"
+              dataKeyY="rate"
+              dataKeyX="year"
+              tooltipLabel="投票率"
+              tooltipPostFix="年"
+            />
+          </div>
+        </Card>
+        <Card
+          titleDivide
+          className="rounded-b-lg"
+          title={<p className="-mb-1 text-base">歷屆投票數</p>}
+        >
+          <div className="px-4 pt-2">
+            <NumberBars
+              data={parseNumberBarsData(allData, county, town)}
+              dataKeyY="number"
+              dataKeyX="year"
+              tooltipLabel="投票數"
+              tooltipPostFix="年"
+            />
+          </div>
+        </Card>
+        <Card className="rounded-b-lg">
+          <div>
+            {county ? (
+              <div>
+                <p className="mb-2 border-b border-b-[#94A3B8] px-3 pb-2 text-base font-semibold leading-none text-primary-bgMain">
+                  鄉鎮市區
+                </p>
+                <div className="pointer-events-auto mx-2 mb-3 flex flex-wrap gap-2">
+                  {townArray &&
+                    townArray.map(({ value, key }) => {
+                      return (
+                        <Item key={key} onClick={() => setTown(key)}>
+                          {value}
+                        </Item>
+                      );
+                    })}
+                </div>
+              </div>
+            ) : (
+              countyTownArray.map(({ label, counties }) => {
+                return (
+                  <div key={label}>
+                    <p className="pointer-events-auto mb-2 border-b border-b-[#94A3B8] px-3 pb-2 text-base font-semibold leading-none text-primary-bgMain">
+                      {label}
+                    </p>
+                    <div className="pointer-events-auto mx-2 mb-3 flex flex-wrap gap-2">
+                      {counties.map(({ value, key }) => {
+                        return (
+                          <Item
+                            key={key}
+                            onClick={() => {
+                              setTown(null);
+                              setCounty(key);
+                            }}
+                          >
+                            {value}
+                          </Item>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </Card>
+      </div>
+      <div className="pointer-events-auto fixed right-0 top-1/2 pb-3 pr-4">
+        <TabButtonCol
+          tabs={colTabArray}
+          currentTab={colTab || "1"}
+          onClick={setColTab}
+        />
+      </div>
+    </div>
+  ) : (
     <div className="absolute bottom-0 left-0 max-h-[60%] w-full ">
       <div className="absolute bottom-full right-0 pb-3 pr-4">
         <TabButtonCol
           tabs={colTabArray}
-          currentTab={colTab}
+          currentTab={colTab || "1"}
           onClick={setColTab}
         />
       </div>
       <Card
         className="px-4 pt-4"
         title={
-          <p>{t(county ? county : electionSession[year || "2020"].session)}</p>
+          <p>
+            {t(
+              countyArray.find(({ key }) => key === county)?.value ??
+                electionSession[year || "2020"].session
+            )}
+          </p>
         }
         titleRight={
           <div className="flex h-6 rounded bg-white shadow">
@@ -156,8 +408,8 @@ export default function MobileSheet({
             >
               <div className="flex flex-wrap gap-2 p-3">
                 {county &&
-                  data[dataKey].detail &&
-                  Object.keys(data[dataKey].detail!).map((item) => {
+                  data[countyKey].detail &&
+                  Object.keys(data[countyKey].detail!).map((item) => {
                     if (item === "all") return null;
                     const {
                       voteRate,
@@ -166,7 +418,7 @@ export default function MobileSheet({
                       candidate3,
                       validVotes,
                       fieldCN,
-                    } = data[dataKey].detail![item];
+                    } = data[countyKey].detail![item];
                     const rate = formatToPercentage(voteRate / 100).replace(
                       "%",
                       ""
@@ -202,7 +454,7 @@ export default function MobileSheet({
                     );
                   })}
                 {/* if county didn't selected || no detail data */}
-                {(!county || !data[dataKey].detail) &&
+                {(!county || !data[countyKey].detail) &&
                   countyArray.map(({ value, key }) => {
                     const {
                       voteRate,
@@ -210,7 +462,7 @@ export default function MobileSheet({
                       candidate2,
                       candidate3,
                       validVotes,
-                    } = data[key.replaceAll(" ", "")];
+                    } = data[removeSpace(key)];
                     const rate = formatToPercentage(voteRate / 100).replace(
                       "%",
                       ""
@@ -226,7 +478,10 @@ export default function MobileSheet({
                     return (
                       <div
                         key={value}
-                        onClick={() => setCounty(value)}
+                        onClick={() => {
+                          setTown(null);
+                          setCounty(key);
+                        }}
                         className={`flex w-[calc(100%_/_4_-_8px_+_(8px_/_4))] flex-col items-center rounded py-2 text-base font-semibold text-white ${
                           bgColorMapLight[candidate.party]
                         }`}

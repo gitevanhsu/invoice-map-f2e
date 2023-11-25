@@ -37,7 +37,12 @@ export default async function Page(props: PageProps) {
         {t("to-second-page")}
       </Link> */}
       <GeoMap data={data} />
-      <MobileSheet lng={params.lng} year={year} data={data} />
+      <MobileSheet
+        lng={params.lng}
+        year={year}
+        data={data}
+        allData={{ "2016": data2016, "2020": data2020 }}
+      />
     </>
   );
 }
