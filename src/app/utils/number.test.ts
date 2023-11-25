@@ -1,5 +1,10 @@
 // number.test.tsx
-import { sum, formatToPercentage, findHighestCandidate } from "./number";
+import {
+  sum,
+  formatToPercentage,
+  findHighestCandidate,
+  numberFormatter,
+} from "./number";
 
 describe("sum function", () => {
   test("1 + 2", () => {
@@ -8,6 +13,19 @@ describe("sum function", () => {
 
   test("10 + 15", () => {
     expect(sum(10, 15)).toBe(25);
+  });
+});
+
+// format number with comma
+describe("number formatter", () => {
+  test("1234", () => {
+    expect(numberFormatter(1234)).toBe("1,234");
+  });
+  test("123", () => {
+    expect(numberFormatter(123)).toBe("123");
+  });
+  test("6734567", () => {
+    expect(numberFormatter(6734567)).toBe("6,734,567");
   });
 });
 
@@ -37,7 +55,7 @@ describe("findHighestCandidate", () => {
     const result = findHighestCandidate(...candidates);
 
     expect(result.id).toBe("2"); // Candidate 2 has the highest votes
-    expect(result.share).toBeCloseTo(44.44); // 200 / (100 + 200 + 150) * 100 ≈ 44.44%
+    expect(result.share).toBe("44.44%"); // 200 / (100 + 200 + 150) * 100 ≈ 44.44%
     expect(result.total).toBe(450); // 100 + 200 + 150 = 450
   });
 
@@ -52,7 +70,7 @@ describe("findHighestCandidate", () => {
     const result = findHighestCandidate(candidate);
 
     expect(result.id).toBe("1"); // Only one candidate, so it should be the highest
-    expect(result.share).toBe(100); // 100 / 100 = 100%
+    expect(result.share).toBe("100.00%"); // 100 / 100 = 100%
     expect(result.total).toBe(100); // Total votes is the same as the only candidate's votes
   });
 
@@ -66,7 +84,7 @@ describe("findHighestCandidate", () => {
     const result = findHighestCandidate(...candidates);
 
     expect(result.id).toBe("1"); // All candidates have zero votes, so it should return the first one
-    expect(result.share).toBe(0); // Share is zero since all votes are zero
+    expect(result.share).toBe("0"); // Share is zero since all votes are zero
     expect(result.total).toBe(0); // Total votes is zero
   });
 });
