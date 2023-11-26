@@ -7,48 +7,47 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   Cell,
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  {
-    name: "Page A",
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: "Page B",
-    pv: 1398,
-    amt: 2210,
-  },
-];
-type dataType = {
+type DataType = {
   year: string;
   number: number;
 };
 
 type SimpleBarsProps = {
-  data: Array<dataType>;
+  data: Array<DataType>;
   dataKeyX: string;
   dataKeyY: string;
   tooltipLabel: string;
   tooltipPostFix: string;
-  // labelY: string;
 };
 
 const gradientColors = ["#94A3B8", "#F43F5E"];
 
+const years = ["1996", "2000", "2004", "2008", "2012"];
+
+function createMockNum(realData: Array<DataType>) {
+  let num = 0;
+  realData.forEach(({ number }) => (num += number));
+  return Math.floor(Math.random() * (num * 0.7));
+}
+
 export default function NumberBars({
-  data,
+  data: realData,
   dataKeyX,
   dataKeyY,
   tooltipLabel,
   tooltipPostFix,
 }: SimpleBarsProps) {
+  const fakeData = years.map((year) => ({
+    year,
+    number: createMockNum(realData),
+  }));
+  const data = [...fakeData, ...realData];
   return (
-    <ResponsiveContainer width="100%" height={120}>
+    <ResponsiveContainer width="100%" height="100%">
       <BarChart
         data={data}
         margin={{

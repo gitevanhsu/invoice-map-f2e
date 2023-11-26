@@ -1,9 +1,9 @@
-type ItemProps = { children: string; onClick: () => void };
+type ItemProps = { className?: string; children: string; onClick: () => void };
 
-export default function Item({ children, onClick }: ItemProps) {
+export default function Item({ children, onClick, className }: ItemProps) {
   return (
     <p
-      className="flex w-[calc(100%_/_4_-_8px_+_(8px_/_4))] max-w-[150px] items-center justify-center rounded border border-black px-3 py-2 text-sm leading-none text-primary-bgMain"
+      className={`flex items-center justify-center rounded border border-black px-3 py-2 text-sm leading-none text-primary-bgMain ${className}`}
       onClick={onClick}
     >
       {children}

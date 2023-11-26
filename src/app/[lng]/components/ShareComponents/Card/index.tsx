@@ -8,6 +8,8 @@ type CardProps = {
   otherInfo?: JSX.Element;
   children: JSX.Element;
   className?: string;
+  openText?: string;
+  closeText?: string;
 };
 
 export default function Card({
@@ -17,6 +19,8 @@ export default function Card({
   titleRight,
   children,
   className,
+  openText,
+  closeText,
 }: CardProps) {
   const [open, setOpen] = useState<boolean>(false);
   const ref = useClickOutSide(() => setOpen(false));
@@ -55,7 +59,7 @@ export default function Card({
             open || "border-t border-[#94A3B8]"
           }`}
         >
-          {open ? "收合內容" : "展開更多"}
+          {open ? openText : closeText}
         </p>
       )}
     </div>

@@ -5,12 +5,14 @@ type ElectionDetailProps = {
   total: string;
   valid: string;
   invalid: string;
+  t: (str: string) => string;
 };
 export default function ElectionDetail({
   percentage,
   total,
   valid,
   invalid,
+  t,
 }: ElectionDetailProps) {
   return (
     <div>
@@ -19,7 +21,7 @@ export default function ElectionDetail({
         titleDivide
         title={
           <p className="text-base font-semibold leading-none text-[#475569]">
-            投票率
+            {t("投票率")}
           </p>
         }
       >
@@ -106,14 +108,14 @@ export default function ElectionDetail({
             {/* valid */}
             <g className="fill-[#475569] text-sm leading-none">
               <text x="210" y="20" style={{ textAnchor: "start" }}>
-                有效
+                {t("有效")}
               </text>
               <text x="330" y="20" style={{ textAnchor: "end" }}>
                 {valid}
               </text>
               {/* invalid */}
               <text x="210" y="42" style={{ textAnchor: "start" }}>
-                無效
+                {t("無效")}
               </text>
               <text x="330" y="42" style={{ textAnchor: "end" }}>
                 {invalid}
@@ -125,7 +127,7 @@ export default function ElectionDetail({
                 className="fill-[#E11D48] text-sm leading-none"
                 style={{ textAnchor: "start" }}
               >
-                總數
+                {t("總數")}
               </text>
               <text
                 x="330"

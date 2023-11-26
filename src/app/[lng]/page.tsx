@@ -1,8 +1,7 @@
 import { useTranslation } from "@/app/i18n";
 
 import { PageProps } from "./types";
-import GeoMap from "./components/GeoComponents";
-import MobileSheet from "./components/MobileSheet";
+import { GeoMap, MobileSheet, DesktopSheet } from "./components/";
 
 import _data2016 from "@/public/2016.json";
 import _data2020 from "@/public/2020.json";
@@ -32,12 +31,14 @@ export default async function Page(props: PageProps) {
 
   return (
     <>
-      {/* <h1>{t("title")}</h1> */}
-      {/* <Link className="border-2" href={`/${lng}/second-page`}>
-        {t("to-second-page")}
-      </Link> */}
-      <GeoMap data={data} />
+      <GeoMap data={data} lng={params.lng} />
       <MobileSheet
+        lng={params.lng}
+        year={year}
+        data={data}
+        allData={{ "2016": data2016, "2020": data2020 }}
+      />
+      <DesktopSheet
         lng={params.lng}
         year={year}
         data={data}

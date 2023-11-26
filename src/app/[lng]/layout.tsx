@@ -21,8 +21,8 @@ type LanguageIconMapProps = {
 };
 
 const languageIconMap: LanguageIconMapProps = {
-  tw: { title: "繁體中文", icon: twIcon },
-  jp: { title: "日本語", icon: jpIcon },
+  "zh-Hant": { title: "繁體中文", icon: twIcon },
+  ja: { title: "日本語", icon: jpIcon },
   en: { title: "English", icon: usIcon },
 };
 
@@ -52,7 +52,7 @@ export default function RootLayout({ children, params: { lng } }: LayoutProps) {
       <head />
       <body
         suppressHydrationWarning={true}
-        className="relative flex min-h-screen flex-col bg-primary-bgMain"
+        className="relative flex min-h-screen flex-col bg-primary-bgMain md:overflow-hidden"
       >
         <DeskHeader languageList={languageList} lng={lng} />
         <MobileHeader languageList={languageList} lng={lng} />

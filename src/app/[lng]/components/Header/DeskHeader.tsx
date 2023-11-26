@@ -15,14 +15,14 @@ export default async function DeskHeader({ languageList, lng }: HeaderProps) {
         <Image
           src={logo}
           alt="logo"
-          className="mr-2 h-[26px] w-[26px] font-sans text-2xl font-bold"
+          className="mr-2 h-[26px] w-[26px] font-sans text-2xl font-bold leading-none"
         />
         <p className="text-white">{t("總統開票懶人包")}</p>
       </div>
       <div>
         <HoverList
           title={
-            <div className="px-4 py-2">
+            <div className="z-20 px-4 py-2">
               <Icon path={mdiWeb} size={1} color="#fff" />
             </div>
           }

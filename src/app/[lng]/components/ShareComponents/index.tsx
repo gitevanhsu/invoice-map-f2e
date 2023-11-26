@@ -8,3 +8,5 @@ export { default as PartyBars } from "./PartyBars";
 export { default as SimpleChart } from "./SimpleChart";
 export { default as NumberBars } from "./NumberBars";
 export { default as Item } from "./Item";
+export { default as LinkGroup } from "./LinkGroup";
+export { default as ItemColored } from "./ItemColored";
