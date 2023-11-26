@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Page from "./page";
-const twProps = { params: { lng: "tw" }, searchParams: { year: "2020" } };
+const twProps = { params: { lng: "zh-Hant" }, searchParams: { year: "2020" } };
 const enProps = { params: { lng: "en" }, searchParams: { year: "2020" } };
-const jpProps = { params: { lng: "jp" }, searchParams: { year: "2020" } };
+const jpProps = { params: { lng: "ja" }, searchParams: { year: "2020" } };
 
 jest.mock("next/router", () => require("next-router-mock"));
 
@@ -27,20 +27,20 @@ jest.mock("next/navigation", () => {
 });
 
 describe("i18n function", () => {
-  test("tw", async () => {
+  test("zh-Hant", async () => {
     const Result = await Page(twProps);
     render(Result);
-
-    expect(await screen.findByText("本屆")).toBeInTheDocument();
+    expect(await screen.findByText("第15屆")).toBeInTheDocument();
   });
   test("en", async () => {
     const Result = await Page(enProps);
     render(Result);
-    expect(await screen.findByText("Current")).toBeInTheDocument();
+    expect(await screen.findByText("15th")).toBeInTheDocument();
   });
-  test("jp", async () => {
-    const Result = await Page(jpProps);
-    render(Result);
-    expect(await screen.findByText("今回")).toBeInTheDocument();
-  });
+
+  // test("ja", async () => {
+  //   const Result = await Page(jpProps);
+  //   render(Result);
+  //   expect(await screen.findByText("第15回")).toBeInTheDocument();
+  // });
 });

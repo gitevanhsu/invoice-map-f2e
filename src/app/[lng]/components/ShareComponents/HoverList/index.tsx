@@ -8,7 +8,7 @@ export default function HoverList({ title, content }: HoverListProps) {
 
   return (
     <div
-      className="relative cursor-pointer bg-primary-blue"
+      className="relative z-20 cursor-pointer bg-primary-blue"
       onMouseOver={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >

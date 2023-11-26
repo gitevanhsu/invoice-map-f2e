@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
+
 import { InvoiceDataType, InvoiceType } from "@/app/types";
-import { bgColorMapLight } from "@/app/setting/color";
+import { bgColorMapLight, textColorMap } from "@/app/setting/color";
 import { countyArray, countyTownArray } from "@/app/setting/location";
 import {
   findHighestCandidate,
@@ -9,7 +10,6 @@ import {
   formatToPercentage,
 } from "@/app/utils/number";
 import CandidateBasicInfo from "../CandidateBasicInfo";
-import ElectionDetail from "../ElectionDetail";
 import {
   Card,
   TabButtonRow,
@@ -26,6 +26,7 @@ import { useQueryState } from "next-usequerystate";
 import { useTranslation } from "@/app/i18n/client";
 import { partyIconMap } from "@/app/setting/partyIcon";
 import { removeSpace } from "@/app/utils/string";
+import { ElectionDetailDesk } from "..";
 
 type getElectionDetailProps = {
   [key: string]: {
@@ -201,176 +202,157 @@ export default function MobileSheet({
   const coloredItemData = data[countyKey].detail ?? data;
 
   return (
-    <div className="md:hidden">
-      {colTab === "2" ? (
-        <div className="pointer-events-none absolute top-0 mt-[50px] w-full md:mt-[80px]">
-          <div className="flex items-center bg-[#e2e8f0] p-4 text-lg font-bold leading-none text-primary-bgMain">
-            {currentTown ? (
-              <>
-                <CardSmall className="justify-center px-2 py-1">
-                  <>{currentCounty}</>
-                </CardSmall>
-                <p className="mx-[2px] text-lg leading-none text-primary-bgMain">
-                  /
-                </p>
-                {currentTown}
-              </>
-            ) : (
-              currentCounty
-            )}
-            {county && " "}
-            {t("歷屆變化")}
-          </div>
-
-          {county && (
-            <div className="pointer-events-none relative h-[400px]"></div>
-          )}
-          <div
-            className={`flex flex-col space-y-3 bg-[#e2e8f0] p-4 ${
-              !county && "pt-0"
-            }`}
-          >
-            <Card
-              titleDivide
-              className="rounded-b-lg"
-              title={<p className="-mb-1 text-base">{t("政黨輪替")}</p>}
+    <div className="hidden md:block">
+      <div className="absolute right-0 top-20 h-[calc(100vh_-_80px_-25px)] min-h-[600px] w-1/2 overflow-auto pb-10 pr-5 pt-10">
+        {colTab === "2" ? (
+          <div className="absolute top-0 w-full">
+            <p className="flex items-center bg-[#e2e8f0] p-4 text-lg font-bold leading-none text-primary-bgMain">
+              {currentTown ? (
+                <>
+                  <CardSmall className="px-2 py-1">
+                    <>{t(currentCounty)} </>
+                  </CardSmall>
+                  <p className="mx-[2px] text-lg leading-none text-primary-bgMain">
+                    /
+                  </p>
+                  {t(currentTown)}
+                </>
+              ) : (
+                t(currentCounty)
+              )}
+              {county && " "}
+              {t("歷屆變化")}
+            </p>
+            <div
+              className={`flex flex-col space-y-3 bg-[#e2e8f0] p-4 ${
+                !county && "pt-0"
+              }`}
             >
-              <div className="px-4">
-                <PartyBars
-                  data={parsePartyBarsData(allData, county, town)}
-                  label={t("政黨")}
-                />
-              </div>
-            </Card>
-            <Card
-              titleDivide
-              className="rounded-b-lg"
-              title={<p className="-mb-1 text-base">{t("歷屆投票率")}</p>}
-            >
-              <div className="h-[120px] pr-4 pt-2">
-                <SimpleChart
-                  data={parseSimpleChartData(allData, county, town)}
-                  labelY="%"
-                  dataKeyY="rate"
-                  dataKeyX="year"
-                  tooltipLabel={t("投票率")}
-                  tooltipPostFix={t("年")}
-                />
-              </div>
-            </Card>
-            <Card
-              titleDivide
-              className="rounded-b-lg"
-              title={<p className="-mb-1 text-base">{t("歷屆投票數")}</p>}
-            >
-              <div className="h-[120px] px-4 pt-2">
-                <NumberBars
-                  data={parseNumberBarsData(allData, county, town)}
-                  dataKeyY="number"
-                  dataKeyX="year"
-                  tooltipLabel={t("投票數")}
-                  tooltipPostFix={t("年")}
-                />
-              </div>
-            </Card>
-            <Card className="rounded-b-lg">
-              <div>
-                {county ? (
-                  <div>
-                    <p className="mb-2 border-b border-b-[#94A3B8] px-3 pb-2 text-base font-semibold leading-none text-primary-bgMain">
-                      {t("鄉鎮市區")}
-                    </p>
-                    <div className="pointer-events-auto mx-2 mb-3 grid grid-cols-4 gap-2">
-                      {townArray &&
-                        townArray.map(({ value, key }) => {
-                          return (
-                            <Item key={key} onClick={() => setTown(key)}>
-                              {value}
-                            </Item>
-                          );
-                        })}
-                    </div>
-                  </div>
-                ) : (
-                  countyTownArray.map(({ label, counties }) => {
-                    return (
-                      <div key={label}>
-                        <p className="pointer-events-auto mb-2 border-b border-b-[#94A3B8] px-3 pb-2 text-base font-semibold leading-none text-primary-bgMain">
-                          {label}
-                        </p>
-                        <div className="pointer-events-auto mx-2 mb-3 grid grid-cols-4 gap-2">
-                          {counties.map(({ value, key }) => {
+              <Card
+                titleDivide
+                className="rounded-b-lg"
+                title={<p className="-mb-1 text-base">{t("政黨輪替")}</p>}
+              >
+                <div className="px-4">
+                  <PartyBars
+                    data={parsePartyBarsData(allData, county, town)}
+                    label={t("政黨")}
+                  />
+                </div>
+              </Card>
+              <Card
+                titleDivide
+                className="rounded-b-lg"
+                title={<p className="-mb-1 text-base">{t("歷屆投票率")}</p>}
+              >
+                <div className="h-[150px] pr-4 pt-2">
+                  <SimpleChart
+                    data={parseSimpleChartData(allData, county, town)}
+                    labelY="%"
+                    dataKeyY="rate"
+                    dataKeyX="year"
+                    tooltipLabel={t("投票率")}
+                    tooltipPostFix="年"
+                  />
+                </div>
+              </Card>
+              <Card
+                titleDivide
+                className="rounded-b-lg"
+                title={<p className="-mb-1 text-base">{t("歷屆投票數")}</p>}
+              >
+                <div className="h-[180px] px-4 pt-2">
+                  <NumberBars
+                    data={parseNumberBarsData(allData, county, town)}
+                    dataKeyY="number"
+                    dataKeyX="year"
+                    tooltipLabel={t("投票數")}
+                    tooltipPostFix="年"
+                  />
+                </div>
+              </Card>
+              <Card className="rounded-b-lg">
+                <div>
+                  {county ? (
+                    <div>
+                      <p className="mb-2 border-b border-b-[#94A3B8] px-3 pb-2 text-base font-semibold leading-none text-primary-bgMain">
+                        {t("鄉鎮市區")}
+                      </p>
+                      <div className="grid grid-cols-7 gap-2 p-2">
+                        {townArray &&
+                          townArray.map(({ value, key }) => {
                             return (
                               <Item
                                 key={key}
-                                onClick={() => {
-                                  setTown(null);
-                                  setCounty(key);
-                                }}
+                                className="cursor-pointer"
+                                onClick={() => setTown(key)}
                               >
-                                {value}
+                                {t(value)}
                               </Item>
                             );
                           })}
-                        </div>
                       </div>
-                    );
-                  })
-                )}
-              </div>
-            </Card>
+                    </div>
+                  ) : (
+                    countyTownArray.map(({ label, counties }) => {
+                      return (
+                        <div key={label} className="mb-6">
+                          <p className="mb-2 border-b border-b-[#94A3B8] px-3 pb-2 text-base font-semibold leading-none text-primary-bgMain">
+                            {t(label)}
+                          </p>
+                          <div className="mt-3 grid grid-cols-6 gap-3 p-3">
+                            {counties.map(({ value, key }) => {
+                              return (
+                                <Item
+                                  key={key}
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    setTown(null);
+                                    setCounty(key);
+                                  }}
+                                >
+                                  {t(value)}
+                                </Item>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </Card>
+            </div>
           </div>
-          <div className="pointer-events-auto fixed right-0 top-1/2 pb-3 pr-4">
-            <TabButtonCol
-              tabs={colTabArray}
-              currentTab={colTab || "1"}
-              onClick={setColTab}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="absolute bottom-0 left-0 max-h-[60%] w-full ">
-          <div className="absolute bottom-full right-0 pb-3 pr-4">
-            <TabButtonCol
-              tabs={colTabArray}
-              currentTab={colTab || "1"}
-              onClick={setColTab}
-            />
-          </div>
-          <Card
-            openText={t("收合內容")}
-            closeText={t("展開更多")}
-            className="px-4 pt-4"
-            title={
-              <p>
-                {t(
-                  countyArray.find(({ key }) => key === county)?.value ??
-                    electionSession[year || "2020"].session
-                )}
-              </p>
-            }
-            titleRight={
-              <LinkGroup
-                leftHref={`/${lng}?year=2020${
-                  county ? `&county=${county}` : ""
-                }`}
-                rightHref={`/${lng}?year=2016${
-                  county ? `&county=${county}` : ""
-                }`}
-                year={year}
-              >
-                <>{year}</>
-              </LinkGroup>
-            }
-            otherInfo={
-              <div className="mt-3 flex flex-col space-y-3">
-                <ElectionDetail {...electionDetail} t={t} />
+        ) : (
+          <>
+            <LinkGroup
+              leftHref={`/${lng}?year=2020${county ? `&county=${county}` : ""}`}
+              rightHref={`/${lng}?year=2016${
+                county ? `&county=${county}` : ""
+              }`}
+              year={year}
+            >
+              <h1>
+                {year} {t(electionSession[year].session)} {queryCounty?.value}
+                {currentTown}
+              </h1>
+            </LinkGroup>
+            <Card className="mt-3 flex flex-col gap-3 rounded-b-lg p-6">
+              <>
+                <div className="flex items-center justify-center gap-2 rounded-lg md:flex-wrap">
+                  {candidateArray.map((item) => (
+                    <CandidateBasicInfo key={item.id} {...item} t={t} />
+                  ))}
+                </div>
+                <ElectionDetailDesk {...electionDetail} t={t} />
                 <TabButtonRow
                   tabs={rowTabArray}
                   currentTab={rowTab}
                   onClick={setRowTab}
                 />
                 <Card
+                  titleDivide
                   className="rounded-b-lg"
                   title={<>{t(county ? "鄉鎮市區" : "縣市")}</>}
                   titleRight={
@@ -383,9 +365,8 @@ export default function MobileSheet({
                       </div>
                     </div>
                   }
-                  titleDivide
                 >
-                  <div className="grid grid-cols-4 gap-2 p-2">
+                  <div className="grid grid-cols-5 gap-3 p-3">
                     {coloredItemArray.map(({ value, key }) => {
                       const {
                         voteRate,
@@ -426,7 +407,7 @@ export default function MobileSheet({
                               <span className="absolute right-1">%</span>
                             </p>
                           ) : (
-                            <p className="cursor-pointer text-center text-sm font-normal leading-none">
+                            <p className="cursor-pointer text-center text-sm font-normal leading-none md:text-lg md:leading-none">
                               {number}
                             </p>
                           )}
@@ -435,17 +416,38 @@ export default function MobileSheet({
                     })}
                   </div>
                 </Card>
-              </div>
-            }
-          >
-            <div className="flex items-center justify-center space-x-2 rounded-lg">
-              {candidateArray.map((item) => (
-                <CandidateBasicInfo key={item.id} {...item} t={t} />
-              ))}
-            </div>
-          </Card>
+              </>
+            </Card>
+          </>
+        )}
+        <div className="fixed bottom-10 right-6">
+          <TabButtonCol
+            tabs={colTabArray}
+            currentTab={colTab || "1"}
+            onClick={setColTab}
+          />
         </div>
-      )}
+      </div>
+      <div className="fixed bottom-10 left-14">
+        {candidateArray.map(({ party, id }) => (
+          <CardSmall
+            key={party}
+            className="m-2 w-full items-center justify-start border border-white p-2"
+            bg={`${bgColorMapLight[party]}`}
+          >
+            <>
+              <div
+                className={`mr-[2px] flex h-4 w-4 items-center justify-center overflow-hidden rounded-full bg-white text-[10px] leading-3 md:text-base ${textColorMap[party]} `}
+              >
+                {id}
+              </div>
+              <p className="text-xs leading-none text-white md:text-base md:leading-none">
+                {t(party)}
+              </p>
+            </>
+          </CardSmall>
+        ))}
+      </div>
     </div>
   );
 }
