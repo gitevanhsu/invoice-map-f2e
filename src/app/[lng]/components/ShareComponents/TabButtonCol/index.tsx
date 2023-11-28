@@ -13,6 +13,7 @@ export default function StatusButton({
     <div className="flex flex-col overflow-hidden rounded-lg bg-white leading-none">
       {tabs.map(({ value, id }) => (
         <button
+          data-testid={value}
           key={id}
           onClick={() => onClick(id)}
           className={`h-1/2 cursor-pointer px-2 py-4 text-center ${

@@ -6,3 +6,5 @@ export { default as ElectionDetailDesk } from "./ElectionDetailDesk";
 export { default as GeoMap } from "./GeoMap";
 export { default as MobileSheet } from "./MobileSheet";
 export { default as DesktopSheet } from "./DesktopSheet";
+export { default as DataProvider } from "./Providers";
+export { default as LanguageLink } from "./LanguageLink";

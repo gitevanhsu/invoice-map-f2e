@@ -1,7 +1,5 @@
-import { useTranslation } from "@/app/i18n";
-
 import { PageProps } from "./types";
-import { GeoMap, MobileSheet, DesktopSheet } from "./components/";
+import { GeoMap, MobileSheet, DesktopSheet, DataProvider } from "./components/";
 
 import _data2016 from "@/public/2016.json";
 import _data2020 from "@/public/2020.json";
@@ -23,27 +21,18 @@ function dataPicker(year: string) {
 
 export default async function Page(props: PageProps) {
   const {
-    params,
+    params: { lng },
     searchParams: { year = "2020" },
   } = props;
-  const { t } = await useTranslation(params.lng);
   const data = dataPicker(year);
 
   return (
-    <>
-      <GeoMap data={data} lng={params.lng} />
-      <MobileSheet
-        lng={params.lng}
-        year={year}
-        data={data}
-        allData={{ "2016": data2016, "2020": data2020 }}
-      />
-      <DesktopSheet
-        lng={params.lng}
-        year={year}
-        data={data}
-        allData={{ "2016": data2016, "2020": data2020 }}
-      />
-    </>
+    <DataProvider data={data} year={year} lng={lng}>
+      <>
+        <GeoMap />
+        <MobileSheet />
+        <DesktopSheet />
+      </>
+    </DataProvider>
   );
 }

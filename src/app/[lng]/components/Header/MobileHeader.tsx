@@ -33,6 +33,7 @@ export default function MobileHeader({ languageList, lng }: HeaderProps) {
     <header className="flex h-[50px] items-center justify-between bg-primary-blue px-4 py-3 md:hidden">
       <div className="flex">
         <Image
+          priority
           src={logo}
           alt="logo"
           className="mr-2 h-[26px] w-[26px] font-sans text-2xl font-bold"
