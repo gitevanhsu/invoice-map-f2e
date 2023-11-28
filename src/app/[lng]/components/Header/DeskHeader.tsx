@@ -13,6 +13,7 @@ export default async function DeskHeader({ languageList, lng }: HeaderProps) {
     <header className="hidden h-[80px] items-center justify-between bg-primary-blue py-7 pl-[60px] leading-6 md:flex">
       <div className="flex items-center">
         <Image
+          priority
           src={logo}
           alt="logo"
           className="mr-2 h-[26px] w-[26px] font-sans text-2xl font-bold leading-none"

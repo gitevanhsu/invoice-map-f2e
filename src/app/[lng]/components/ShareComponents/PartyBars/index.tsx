@@ -38,6 +38,7 @@ export default function PartyBars({ data: realData, label }: PartyBarsProps) {
             className={`relative flex h-[100px] items-center justify-center bg-gradient-to-b ${width} ${fromColorMapLight[party]}`}
           >
             <Image
+              priority
               src={icon}
               alt="party icon"
               className="h-5 w-5 rounded-full"

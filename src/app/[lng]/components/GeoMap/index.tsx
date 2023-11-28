@@ -1,6 +1,6 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { geoPath, geoMercator } from "d3-geo";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+
 import Icon from "@mdi/react";
 import { mdiChevronLeft } from "@mdi/js";
 import { useQueryState } from "next-usequerystate";
@@ -8,46 +8,17 @@ import { select } from "d3-selection";
 import * as d3Transition from "d3-transition";
 select.prototype.transition = d3Transition;
 
-import {
-  fillColorMap,
-  fillColorMapDark,
-  fillColorMapLight,
-} from "@/app/setting/color";
 import countyGeoData from "@/public/countyGeoData.json";
-import townGeoData from "@/public/townGeoData.json";
-import { InvoiceType } from "@/app/types";
-import { findHighestCandidate } from "@/app/utils/number";
-import { removeSpace } from "@/app/utils/string";
 import { useTranslation } from "@/app/i18n/client";
+import { CountyGeoItemType } from "./types";
+import { pathGenerator } from "./setting";
 
-type CountyGeoItemType = {
-  type: string;
-  properties: {
-    county_en: string;
-    county: string;
-    county_id: string;
-    area: number;
-    sort: number;
-  };
-  geometry: { type: string; coordinates: number[][][][] };
-  id: string;
-};
-
-type TownGeoItemType = CountyGeoItemType & {
-  properties: { town_en: string; town: string };
-};
-
-const projection = geoMercator().center([124.5, 23.4]).scale(4300);
-const pathGenerator: any = geoPath().projection(projection);
+import { DataContext } from "../Providers";
+import { CountyGeo, TownGeo } from "./components";
 
 // Taiwan GeoMap
-export default function GeoMap({
-  data,
-  lng,
-}: {
-  data: InvoiceType;
-  lng: string;
-}) {
+export default function GeoMap() {
+  const { data, lng } = useContext(DataContext);
   const [county, setCounty] = useQueryState("county");
   const [town, setTown] = useQueryState("town");
   const { t } = useTranslation(lng, "info-sheet");
@@ -108,111 +79,29 @@ export default function GeoMap({
   }, [county, handleZoomIn, handleZoomOut, setTown]);
 
   return (
-    <div className="max-w[650] relative min-w-[350px] md:w-1/2">
+    <div className="max-w[650] relative h-full min-w-[350px] md:w-1/2">
       <svg
-        className="h-full max-h-[800px] w-full"
+        className="absolute left-0 top-0 h-full w-full"
         viewBox="0 0 300 375"
         ref={svgRef}
         onClick={({ target }) => target === svgRef.current && handleZoomOut()}
       >
         <g ref={gRef}>
-          <g>
-            {countyGeoData.features.map((item: CountyGeoItemType, index) => {
-              if (!data) return null;
-              const { county_id, county_en, county } = item.properties;
-              const { candidate1, candidate2, candidate3 } =
-                data[removeSpace(county_en)];
-
-              const candidate = findHighestCandidate(
-                candidate1,
-                candidate2,
-                candidate3
-              );
-              const { party } = candidate;
-              const bounds = pathGenerator.bounds(item);
-              const x = (bounds[0][0] + bounds[1][0]) / 2;
-              const y = (bounds[0][1] + bounds[1][1]) / 2;
-              return (
-                <g key={index} className="relative">
-                  <path
-                    onClick={() => handleZoomIn(item)}
-                    onMouseOver={() =>
-                      zoom || setHover(item.properties.county_id)
-                    }
-                    onMouseLeave={() => setHover("")}
-                    className={`cursor-pointer stroke-white ${
-                      county_id === hover
-                        ? fillColorMapLight[party]
-                        : zoom && zoom !== county_en
-                        ? fillColorMapDark[party]
-                        : fillColorMap[party]
-                    }`}
-                    d={pathGenerator(item)}
-                    style={{
-                      strokeWidth: zoom ? "0.1px" : "0.3px",
-                    }}
-                  />
-                  {!zoom && (
-                    <text
-                      x={x}
-                      y={y}
-                      className="pointer-events-none fill-black text-[0.4em] leading-none"
-                      textAnchor="middle"
-                    >
-                      {t(county)}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </g>
-          <g
-            className={`${!zoom && "hidden"} ${!zoom && "pointer-events-none"}`}
-          >
-            {(townGeoData as { features: Array<TownGeoItemType> }).features.map(
-              (item, index) => {
-                const { county_en, town_en, town } = item.properties;
-                if (county_en !== zoom) return null;
-
-                const { candidate1, candidate2, candidate3 } =
-                  data[removeSpace(county_en)].detail![removeSpace(town_en)];
-                const candidate = findHighestCandidate(
-                  candidate1,
-                  candidate2,
-                  candidate3
-                );
-                const { party } = candidate;
-                const bounds = pathGenerator.bounds(item);
-                const x = (bounds[0][0] + bounds[1][0]) / 2;
-                const y = (bounds[0][1] + bounds[1][1]) / 2;
-                return (
-                  <g key={index}>
-                    <path
-                      onClick={() => {}}
-                      onMouseOver={() => setHover(town_en)}
-                      onMouseLeave={() => setHover("")}
-                      className={`stroke-white stroke-[0.1] ${
-                        town_en === hover
-                          ? fillColorMapLight[party]
-                          : fillColorMap[party]
-                      }`}
-                      d={pathGenerator(item)}
-                    />
-                    {zoom && (
-                      <text
-                        x={x}
-                        y={y}
-                        className="pointer-events-none fill-black text-[0.09em] leading-none"
-                        textAnchor="middle"
-                      >
-                        {t(town)}
-                      </text>
-                    )}
-                  </g>
-                );
-              }
-            )}
-          </g>
+          <CountyGeo
+            data={data}
+            zoom={zoom}
+            hover={hover}
+            onClick={(item) => handleZoomIn(item)}
+            onMouseOver={(id) => zoom || setHover(id)}
+            onMouseLeave={() => setHover("")}
+          />
+          <TownGeo
+            data={data}
+            zoom={zoom}
+            hover={hover}
+            onMouseOver={(townName) => setHover(townName)}
+            onMouseLeave={() => setHover("")}
+          />
         </g>
       </svg>
       {zoom && (

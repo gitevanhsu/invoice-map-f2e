@@ -24,6 +24,7 @@ export default function LinkGroup({
         }`}
       >
         <Image
+          priority
           className={`h-5 w-5 md:h-8 md:w-8 ${
             year === "2020" && "cursor-not-allowed"
           }`}
@@ -42,6 +43,7 @@ export default function LinkGroup({
         }`}
       >
         <Image
+          priority
           className={`h-5 w-5 md:h-8 md:w-8 ${
             year === "2016" && "cursor-not-allowed"
           }`}

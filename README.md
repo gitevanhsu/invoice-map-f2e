@@ -78,4 +78,8 @@ src
 ## Third-Party Services
 
 - [Vercel](https://vercel.com/)  
-  Hosting next.js project with SSR.
+  A platform for hosting Next.js projects with Server-Side Rendering (SSR).
+- [Google Sheet](https://www.google.com/sheets/about/)  
+  Utilized for storing internationalization data, facilitating efficient management of multilingual content.
+- [Google Apps Script](https://www.google.com/script/start/)  
+   Manage internationalization data stored in Google Sheets and respond to update scripts seamlessly.
